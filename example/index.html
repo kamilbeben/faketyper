@@ -1,0 +1,136 @@
+<html>
+    <head>
+        <title>Faketyper demo</title>
+        <link rel="stylesheet" href="../dist/faketyper.css">
+        <script src="../dist/faketyper.js"></script>
+        <style>
+            body {
+                background: #191717;
+                color: #4be83a;
+                padding: 20px;
+                font-family: monospace;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div id="first-stage-container">
+            <span>bezik@bezik:~$</span>
+            <span class="faketyper auto">faketyper --demo</span>
+            <br>
+            <span class="faketyper first">Loading module faketyper</span>
+            <span class="faketyper second">...</span>
+            <br>
+            <span class="faketyper third">After this operation your good taste in web design may be damaged.</span>
+            <br>
+            <span class="faketyper third">Do you want to continue? [Y/n]</span>
+        </div>
+
+        <div id="second-stage-no-container" style="padding-top: 1rem;" hidden>
+            <span class="faketyper second-stage-no">You are probably right.</span>
+        </div>
+
+        <div id="second-stage-yes-container" style="padding-top: 1rem;" hidden>
+            <ul>
+                <li class="faketyper second-stage-yes">Just call faketyper.init() method</li>
+                <li class="faketyper second-stage-yes">You can pass several options like duration, or interval</li>
+                <li class="faketyper second-stage-yes">Check the documentation for detailed documentation.</li>
+                <li class="faketyper second-stage-yes">Have fun!</li>
+            </ul>
+        </div>
+
+        <div id="freetype-container" hidden>
+            <span class="faketyper freetype">bezik@bezik:~$</span>
+            <span id="freetype" class="prompt"></span>
+        </div>
+
+        <script>
+            
+            // faketyper related code starts at line 87
+
+            function clearPrompt () {
+                faketyper.init({
+                    selector: '.faketyper.freetype',
+                    interval: 5
+                }).then(() => {
+                    const prompt = document.querySelector('.prompt');
+                    if (prompt) {
+                        prompt.classList.remove('prompt');
+                    }
+                });
+            }
+
+            function clearActions () {
+                actions = {};
+            }
+
+            const key_code = {
+                y: 121,
+                Y: 89,
+                n: 110,
+                N: 78
+            };
+
+            var actions = {};
+            var freetype = false;
+
+            window.onkeypress = (event) => {
+                const action = actions[event.charCode];
+                if (action) {
+                    action();
+                }
+                if (freetype && event.key.length === 1) {
+                    document.querySelector('#freetype').innerHTML += event.key;
+                }
+            }
+
+            faketyper.init({
+                duration: 500
+            })
+            .then(() => faketyper.init({
+                selector: '.faketyper.first',
+                interval: 5
+            }))
+            .then(() => faketyper.init({
+                selector: '.faketyper.second',
+                duration: 1000
+            }))
+            .then(() => faketyper.init({
+                selector: '.faketyper.third',
+                interval: 5,
+                showPrompt: true
+            }))
+            .then(() => {
+                actions[key_code.y] = actions[key_code.Y] = initSecondStage_yes;
+                actions[key_code.n] = actions[key_code.N] = initSecondStage_no;
+            });
+
+            var enableFreetype = function () {
+                freetype = true;
+                document.querySelector('#freetype-container').hidden = false;
+            }
+
+            var initSecondStage_yes = function() {
+                clearPrompt();
+                document.querySelector('#second-stage-yes-container').hidden = false;
+                faketyper.init({
+                    selector: '.faketyper.second-stage-yes',
+                    interval: 5
+                })
+                .then(enableFreetype);
+                clearActions();
+            }
+
+            var initSecondStage_no = function() {
+                clearPrompt();
+                document.querySelector('#second-stage-no-container').hidden = false;
+                faketyper.init({
+                    selector: '.faketyper.second-stage-no',
+                    interval: 5
+                }).then(enableFreetype);
+                clearActions();
+            }
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+ @keyframes blink {
+    50% { opacity: 1 }
+    100% { opacity: 0 }
+  }
+  
+  .prompt::after {
+    content: "_";
+    animation: blink 1s linear infinite;
+  }
+
+  .faketyper:not(.visible) {
+    opacity: 0;
+  }
